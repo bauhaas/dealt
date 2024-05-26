@@ -1,3 +1,4 @@
+import HelloWorld from "@/app/helloworld";
 import Image from "next/image";
 
 export default function Home() {
@@ -108,6 +109,7 @@ export default function Home() {
           </p>
         </a>
       </div>
+      <HelloWorld />
     </main>
   );
 }
