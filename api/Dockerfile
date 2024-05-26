@@ -1,16 +1,36 @@
-# base image
-FROM node:18.19.0-alpine
+# Use the Node.js 18 image
+FROM node:18
 
-# set working directory
+# Install PostgreSQL client
+RUN apt-get update && apt-get install -y postgresql-client
+
+# Set the working directory
 WORKDIR /app
 
-# install dependencies
+# Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# copy project files
+# Copy the rest of the application code
 COPY . .
 
-# expose port and start application
-EXPOSE 3000
-CMD ["npm", "run", "start:prod"]
+# Ensure the schema.prisma file is copied
+COPY prisma/schema.prisma prisma/
+
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Remove existing node_modules and prisma client binaries
+RUN rm -rf node_modules/.prisma/client
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Set the user to node
+USER node

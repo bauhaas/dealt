@@ -1,22 +1,20 @@
-# base image
-FROM node:18.19.0-alpine
+# Use the Node.js 18 image
+FROM node:18
 
-# set working directory
+# Set the working directory
 WORKDIR /app
 
-# install dependencies
+# Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# copy project files
+# Copy the rest of the application code
 COPY . .
 
-# build the project
-RUN npm run build
+# Set the user to node
+USER node
 
-# install serve to serve the build
-RUN npm install -g serve
-
-# expose port and serve the application
-EXPOSE 3000
-CMD ["serve", "-s", "build"]
+# Default command
+CMD ["npm", "run", "dev"]
