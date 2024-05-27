@@ -11,4 +11,12 @@ export class NotesRepository {
       data,
     });
   }
+
+  async getAllNotesByUserId(userId: number) {
+    return this.prisma.note.findMany({
+      where: {
+        authorId: userId,
+      },
+    });
+  }
 }

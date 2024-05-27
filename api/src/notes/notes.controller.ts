@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   InternalServerErrorException,
   Logger,
   NotFoundException,
@@ -46,6 +47,22 @@ export class NotesController {
         if (error === 'USER_NOT_FOUND') throw new NotFoundException(error);
         else if (error === 'NOTE_CREATION_FAILED')
           throw new InternalServerErrorException(error);
+        throw new InternalServerErrorException('An unexpected error occurred');
+      },
+    );
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation(CreateNoteApiOperation)
+  @ApiOkResponse(CreateNoteApiOkResponse)
+  async getAllNotes(@Req() req: any) {
+    return (await this.notesService.getAllNotes(req.user.id)).mapOrElse(
+      (notes) => {
+        return notes;
+      },
+      (error) => {
+        if (error === 'USER_NOT_FOUND') throw new NotFoundException(error);
         throw new InternalServerErrorException('An unexpected error occurred');
       },
     );

@@ -38,4 +38,19 @@ export class NotesService {
       return Result.err('NOTE_CREATION_FAILED');
     }
   }
+
+  async getAllNotes(userId: number): Promise<Result<Note[], CreateNoteError>> {
+    const user = await this.usersService.findOneById(userId);
+
+    if (!user) {
+      return Result.err('USER_NOT_FOUND');
+    }
+
+    try {
+      const notes = await this.notesRepository.getAllNotesByUserId(userId);
+      return Result.ok(notes);
+    } catch (error) {
+      return Result.err('NOTE_CREATION_FAILED');
+    }
+  }
 }
