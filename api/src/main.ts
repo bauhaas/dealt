@@ -43,6 +43,10 @@ async function setAPIDocumentation(app: INestApplication) {
     .setTitle('Dealt API')
     .setDescription('The Dealt API description')
     .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
