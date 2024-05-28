@@ -36,7 +36,7 @@ const useNotesApi = () => {
     if (!session) {
       throw new Error("Session or access token is missing");
     }
-    const response = await axios.put(
+    const response = await axios.patch(
       `http://localhost:3001/notes/${note.id}`,
       note,
       {

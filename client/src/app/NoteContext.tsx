@@ -67,6 +67,8 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const updateNote = async (note: Note) => {
     const updatedNote = await updateNoted(note);
     setNotes(notes.map((n) => (n.id === note.id ? updatedNote : n)));
+    if (currentNote && updatedNote.id === currentNote.id)
+      setCurrentNote(updatedNote);
   };
 
   const deleteNote = async (id: string) => {

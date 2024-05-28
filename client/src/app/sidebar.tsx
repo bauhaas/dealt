@@ -15,14 +15,44 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRef, useState } from "react";
+import { Note } from "@/app/types/note";
 
 export const Sidebar = () => {
-  const { notes, setCurrentNote, currentNote, addNote, deleteNote } =
-    useNoteContext();
+  const {
+    notes,
+    setCurrentNote,
+    currentNote,
+    addNote,
+    deleteNote,
+    updateNote,
+  } = useNoteContext();
+
+  const [editNoteId, setEditNoteId] = useState<string | null>(null);
+  const [newTitle, setNewTitle] = useState("");
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleRename = (noteId: string, title: string) => {
+    setEditNoteId(noteId);
+    setNewTitle(title);
+
+    setTimeout(() => {
+      inputRef.current?.focus();
+      const len = inputRef.current?.value.length;
+      inputRef.current?.setSelectionRange(len || 0, len || 0);
+    }, 0);
+  };
+
+  const handleRenameSubmit = (noteId: string) => {
+    updateNote({
+      ...notes.find((note) => note.id === noteId)!,
+      title: newTitle,
+    });
+    setEditNoteId(null);
+  };
 
   return (
     <aside className="w-1/4 bg-slate-800 p-6">
@@ -33,15 +63,35 @@ export const Sidebar = () => {
         <span className="font-semibold text-white">dusername</span>
       </div>
       <ul>
-        {notes.map((note) => (
+        {notes.map((note: Note) => (
           <li
             key={note.id}
-            onClick={() => setCurrentNote(note)}
+            onClick={() => {
+              setCurrentNote(note);
+            }}
             className={` ${
-              note.id === currentNote?.id ? "bg-slate-500 text-black" : null
-            } group flex flex-row justify-between items-center text-gray-300 hover:text-gray-50 hover:bg-slate-600 rounded p-2 w-full  bg-slate-800`}
+              note.id === currentNote?.id
+                ? "bg-slate-600 text-black"
+                : "text-gray-300"
+            } group flex flex-row justify-between items-center  hover:text-gray-50 hover:bg-slate-600 rounded p-2 w-full  bg-slate-800`}
           >
-            {note.title}
+            {editNoteId === note.id ? (
+              <input
+                ref={inputRef}
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                onBlur={() => handleRenameSubmit(note.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleRenameSubmit(note.id);
+                  }
+                }}
+                className="w-full  bg-slate-800 text-white px-1"
+              />
+            ) : (
+              <>{note.title}</>
+            )}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -50,7 +100,13 @@ export const Sidebar = () => {
                       <Ellipsis />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                      <DropdownMenuItem className="text-md">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRename(note.id, note.title);
+                        }}
+                        className="text-md"
+                      >
                         <Pen /> Rename
                       </DropdownMenuItem>
                       <DropdownMenuItem

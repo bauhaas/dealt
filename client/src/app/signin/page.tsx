@@ -1,59 +1,22 @@
 "use client";
 
-// src/app/signin/page.tsx
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import useAuthenticationWithCredsForm from "@/hooks/useAuthenticationWithCredsForm";
+import AuthenticationWithCredsForm from "@/components/AuthtenticationWithCredsForm";
+
 export default function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
-  const router = useRouter();
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-
-    if (result?.error) {
-      setError(result.error);
-    } else {
-      // Redirect or do something upon successful sign-in
-      // window.location.href = '/';
-      router.push("/");
-    }
-  };
+  const { values, handleChange, handleSignin } =
+    useAuthenticationWithCredsForm();
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "1rem" }}>
-      <h1>Sign In</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Sign In</button>
-      </form>
-    </div>
+    <AuthenticationWithCredsForm
+      title="Sign in"
+      description="Enter your email and password to access your account."
+      buttonText="Signin"
+      linkText="Don't have an account yet?"
+      linkHref="/signup"
+      onSubmit={handleSignin}
+      values={values}
+      handleChange={handleChange}
+    />
   );
 }

@@ -1,63 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import axios from "axios";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Link from "next/link";
+import FormField from "@/components/FormField";
+import useAuthenticationWithCredsForm from "@/hooks/useAuthenticationWithCredsForm";
+import AuthenticationWithCredsForm from "@/components/AuthtenticationWithCredsForm";
 
 export default function SignupPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:3001/authentication/signup",
-        {
-          email,
-          password,
-          name,
-        }
-      );
-      console.log("Signup successful:", response.data);
-    } catch (error) {
-      console.error("Signup failed:", error);
-    }
-  };
+  const { values, handleChange, handleSignup } =
+    useAuthenticationWithCredsForm();
 
   return (
-    <div>
-      <h1>Signup</h1>
-      <form onSubmit={handleSignup}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
-    </div>
+    <AuthenticationWithCredsForm
+      title="Sign up"
+      description="Enter your email and password to create your account."
+      buttonText="Signup"
+      linkText="Already have an account?"
+      linkHref="/signin"
+      onSubmit={handleSignup}
+      values={values}
+      handleChange={handleChange}
+    />
   );
 }
