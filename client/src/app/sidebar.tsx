@@ -3,10 +3,26 @@
 import { useNoteContext } from "@/app/NoteContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { Ellipsis, Pen, PlusIcon, Trash2 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Sidebar = () => {
-  const { notes, setCurrentNote, currentNote, addNote } = useNoteContext();
+  const { notes, setCurrentNote, currentNote, addNote, deleteNote } =
+    useNoteContext();
 
   return (
     <aside className="w-1/4 bg-slate-800 p-6">
@@ -23,9 +39,39 @@ export const Sidebar = () => {
             onClick={() => setCurrentNote(note)}
             className={` ${
               note.id === currentNote?.id ? "bg-slate-500 text-black" : null
-            } text-gray-300 hover:text-gray-50 hover:bg-slate-600 rounded p-2 w-full justify-start bg-slate-800`}
+            } group flex flex-row justify-between items-center text-gray-300 hover:text-gray-50 hover:bg-slate-600 rounded p-2 w-full  bg-slate-800`}
           >
             {note.title}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="invisible group-hover:visible">
+                      <Ellipsis />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuItem className="text-md">
+                        <Pen /> Rename
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (note.id) {
+                            deleteNote(note.id);
+                          }
+                        }}
+                        className="text-red-500 text-md focus:text-red-500"
+                      >
+                        <Trash2 /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Options</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </li>
         ))}
         <Button

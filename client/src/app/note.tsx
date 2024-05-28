@@ -21,7 +21,9 @@ const Note = () => {
       <input
         type="text"
         value={note.title}
-        onChange={(e) => setNote({ ...note, title: e.target.value })}
+        onChange={(e) => {
+          setNote({ ...note, title: e.target.value });
+        }}
         className="w-full p-2 text-2xl font-bold focus:outline-none focus:ring-0 focus:border-none"
       />
       <textarea
