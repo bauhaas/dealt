@@ -5,7 +5,10 @@ import { NotesRepository } from 'src/notes/notes.repository';
 import { Result } from 'src/result';
 import { UsersService } from 'src/users/users.service';
 
-type CreateNoteError = 'NOTE_CREATION_FAILED' | 'USER_NOT_FOUND';
+type CreateNoteError =
+  | 'NOTE_CREATION_FAILED'
+  | 'NOTE_RETRIEVAL_FAILED'
+  | 'USER_NOT_FOUND';
 
 @Injectable()
 export class NotesService {
@@ -52,7 +55,12 @@ export class NotesService {
       const notes = await this.notesRepository.getAllNotesByUserId(userId);
       return Result.ok(notes);
     } catch (error) {
-      return Result.err('NOTE_CREATION_FAILED');
+      return Result.err('NOTE_RETRIEVAL_FAILED');
     }
+  }
+
+  async deleteNote(noteId: number): Promise<Result<void, CreateNoteError>> {
+    await this.notesRepository.deleteNoteById(noteId);
+    return Result.ok(undefined);
   }
 }

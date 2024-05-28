@@ -6,6 +6,7 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -13,8 +14,10 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/authentication/jwt-auth-guard';
@@ -23,6 +26,10 @@ import {
   CreateNoteApiOkResponse,
   CreateNoteApiOperation,
 } from 'src/notes/docs/createNote.doc';
+import {
+  DeleteNoteApiNoContentResponse,
+  DeleteNoteApiOperation,
+} from 'src/notes/docs/deleteNote.doc';
 import { CreateNoteRequestDto } from 'src/notes/dtos/createNoteRequest.dto';
 import { NotesService } from 'src/notes/notes.service';
 
@@ -40,8 +47,8 @@ export class NotesController {
   async createNote(@Body() data: CreateNoteRequestDto, @Req() req: any) {
     this.logger.debug(req.user);
     return (await this.notesService.createNote(data, req.user.id)).mapOrElse(
-      (note) => {
-        return note;
+      (res) => {
+        return res;
       },
       (error) => {
         if (error === 'USER_NOT_FOUND') throw new NotFoundException(error);
@@ -58,12 +65,34 @@ export class NotesController {
   @ApiOkResponse(CreateNoteApiOkResponse)
   async getAllNotes(@Req() req: any) {
     return (await this.notesService.getAllNotes(req.user.id)).mapOrElse(
-      (notes) => {
-        return notes;
+      (res) => {
+        return res;
       },
       (error) => {
         if (error === 'USER_NOT_FOUND') throw new NotFoundException(error);
         throw new InternalServerErrorException('An unexpected error occurred');
+      },
+    );
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation(DeleteNoteApiOperation)
+  @ApiNoContentResponse(DeleteNoteApiNoContentResponse)
+  @ApiParam({ name: 'id', required: true })
+  async deleteNote(@Param('id') id: string) {
+    this.logger.debug(id);
+    return (await this.notesService.deleteNote(Number(id))).mapOrElse(
+      (res) => {
+        return res;
+      },
+      (error) => {
+        switch (error) {
+          default:
+            throw new InternalServerErrorException(
+              'An unexpected error occurred',
+            );
+        }
       },
     );
   }
