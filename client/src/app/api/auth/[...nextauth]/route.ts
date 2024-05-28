@@ -54,6 +54,7 @@ const authOptions: NextAuthOptions = {
       session.user.id = token.id;
       session.user.email = token.email;
       session.user.accessToken = token.accessToken;
+      session.user.token = token.accessToken;
       return session;
     },
   },

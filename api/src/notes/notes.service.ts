@@ -26,6 +26,8 @@ export class NotesService {
     }
 
     try {
+      this.logger.debug(data);
+      this.logger.debug(user);
       const note = await this.notesRepository.create({
         ...data,
         author: {
