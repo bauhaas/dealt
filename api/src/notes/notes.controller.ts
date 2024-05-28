@@ -7,6 +7,7 @@ import {
   Logger,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -30,7 +31,13 @@ import {
   DeleteNoteApiNoContentResponse,
   DeleteNoteApiOperation,
 } from 'src/notes/docs/deleteNote.doc';
+import {
+  PatchNoteApiBody,
+  PatchNoteApiOkResponse,
+  PatchNoteApiOperation,
+} from 'src/notes/docs/patchNote.doc';
 import { CreateNoteRequestDto } from 'src/notes/dtos/createNoteRequest.dto';
+import { PatchNoteRequestDto } from 'src/notes/dtos/patchNoteRequest.dto';
 import { NotesService } from 'src/notes/notes.service';
 
 @ApiTags('notes')
@@ -71,6 +78,29 @@ export class NotesController {
       (error) => {
         if (error === 'USER_NOT_FOUND') throw new NotFoundException(error);
         throw new InternalServerErrorException('An unexpected error occurred');
+      },
+    );
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation(PatchNoteApiOperation)
+  @ApiBody(PatchNoteApiBody)
+  @ApiOkResponse(PatchNoteApiOkResponse)
+  @ApiParam({ name: 'id', required: true })
+  async updateNote(@Param('id') id: string, @Body() data: PatchNoteRequestDto) {
+    this.logger.debug(id);
+    return (await this.notesService.patchNote(Number(id), data)).mapOrElse(
+      (res) => {
+        return res;
+      },
+      (error) => {
+        switch (error) {
+          default:
+            throw new InternalServerErrorException(
+              'An unexpected error occurred',
+            );
+        }
       },
     );
   }

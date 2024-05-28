@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Note } from '@prisma/client';
 import { CreateNoteRequestDto } from 'src/notes/dtos/createNoteRequest.dto';
+import { PatchNoteRequestDto } from 'src/notes/dtos/patchNoteRequest.dto';
 import { NotesRepository } from 'src/notes/notes.repository';
 import { Result } from 'src/result';
 import { UsersService } from 'src/users/users.service';
@@ -57,6 +58,14 @@ export class NotesService {
     } catch (error) {
       return Result.err('NOTE_RETRIEVAL_FAILED');
     }
+  }
+
+  async patchNote(
+    noteId: number,
+    data: PatchNoteRequestDto,
+  ): Promise<Result<Note, CreateNoteError>> {
+    const note = await this.notesRepository.patchNoteById(noteId, data);
+    return Result.ok(note);
   }
 
   async deleteNote(noteId: number): Promise<Result<void, CreateNoteError>> {

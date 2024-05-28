@@ -20,6 +20,15 @@ export class NotesRepository {
     });
   }
 
+  async patchNoteById(id: number, data: Prisma.NoteUpdateInput) {
+    return this.prisma.note.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  }
+
   async deleteNoteById(id: number) {
     return this.prisma.note.delete({
       where: {
