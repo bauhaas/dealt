@@ -15,10 +15,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    this.logger.debug(payload);
+    this.logger.debug(payload, 'validate jwtstrat');
     const user = await this.usersService.findOneById(payload.sub);
     if (user) {
-      return { id: user.id, email: user.email };
+      this.logger.debug('Validated User:', {
+        id: user.id,
+        email: user.email,
+        scopes: payload.scopes,
+      });
+      return { id: user.id, email: user.email, scopes: payload.scopes };
     }
     return null;
   }

@@ -21,7 +21,9 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { RequiredScopes } from 'src/authentication/decorators/scope.decorator';
 import { JwtAuthGuard } from 'src/authentication/jwt-auth-guard';
+import { ScopesGuard } from 'src/authentication/scopes.guard';
 import {
   CreateNoteApiBody,
   CreateNoteApiOkResponse,
@@ -67,7 +69,8 @@ export class NotesController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ScopesGuard)
+  @RequiredScopes(['notes_read'])
   @ApiOperation(CreateNoteApiOperation)
   @ApiOkResponse(CreateNoteApiOkResponse)
   async getAllNotes(@Req() req: any) {

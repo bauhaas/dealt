@@ -20,7 +20,8 @@ export class AuthenticationService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id };
+    const scopes = ['notes_write', 'notes_delete', 'notes_read'];
+    const payload = { email: user.email, sub: user.id, scopes };
     return {
       access_token: this.jwtService.sign(payload),
     };
