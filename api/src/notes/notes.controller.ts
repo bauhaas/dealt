@@ -49,7 +49,8 @@ export class NotesController {
   constructor(private notesService: NotesService, private logger: Logger) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ScopesGuard)
+  @RequiredScopes(['notes_write'])
   @ApiOperation(CreateNoteApiOperation)
   @ApiBody(CreateNoteApiBody)
   @ApiOkResponse(CreateNoteApiOkResponse)
@@ -86,7 +87,8 @@ export class NotesController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ScopesGuard)
+  @RequiredScopes(['notes_write'])
   @ApiOperation(PatchNoteApiOperation)
   @ApiBody(PatchNoteApiBody)
   @ApiOkResponse(PatchNoteApiOkResponse)
@@ -109,7 +111,8 @@ export class NotesController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ScopesGuard)
+  @RequiredScopes(['notes_delete'])
   @ApiOperation(DeleteNoteApiOperation)
   @ApiNoContentResponse(DeleteNoteApiNoContentResponse)
   @ApiParam({ name: 'id', required: true })
