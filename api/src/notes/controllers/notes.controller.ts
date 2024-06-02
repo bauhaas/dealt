@@ -26,28 +26,28 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RequiredScopes } from 'src/authentication/decorators/scope.decorator';
-import { JwtAuthGuard } from 'src/authentication/jwt-auth-guard';
-import { ScopesGuard } from 'src/authentication/scopes.guard';
+import { JwtAuthGuard } from 'src/authentication/guards/jwt-auth-guard';
+import { ScopesGuard } from 'src/authentication/guards/scopes.guard';
 import {
   CreateNoteApiBody,
   CreateNoteApiOkResponse,
   CreateNoteApiOperation,
-} from 'src/notes/docs/createNote.doc';
+} from 'src/notes/controllers/docs/createNote.doc';
 import {
   DeleteNoteApiForbiddenResponse,
   DeleteNoteApiNoContentResponse,
   DeleteNoteApiOperation,
-} from 'src/notes/docs/deleteNote.doc';
+} from 'src/notes/controllers/docs/deleteNote.doc';
 import {
   PatchNoteApiBody,
   PatchNoteApiNotFoundResponse,
   PatchNoteApiOkResponse,
   PatchNoteApiOperation,
   PathNoteApiForbiddenResponse,
-} from 'src/notes/docs/patchNote.doc';
+} from 'src/notes/controllers/docs/patchNote.doc';
 import { CreateNoteRequestDto } from 'src/notes/dtos/createNoteRequest.dto';
 import { PatchNoteRequestDto } from 'src/notes/dtos/patchNoteRequest.dto';
-import { NotesService } from 'src/notes/notes.service';
+import { NotesService } from 'src/notes/services/notes.service';
 
 @ApiTags('notes')
 @ApiBearerAuth('access-token')

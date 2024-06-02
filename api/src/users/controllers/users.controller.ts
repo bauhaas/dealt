@@ -19,9 +19,9 @@ import {
   CreateUserApiInternalServerErrorResponse,
   CreateUserApiOkResponse,
   CreateUserApiOperation,
-} from 'src/users/docs/createUser.doc';
+} from 'src/users/controllers/docs/createUser.doc';
 import { CreateUserRequestDto } from 'src/users/dtos/createUserRequest.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/services/users.service';
 
 @ApiTags('users')
 @Controller('users')

@@ -1,12 +1,11 @@
 import { Logger, Module } from '@nestjs/common';
-import { AuthenticationService } from 'src/authentication/authentication.service';
-import { JwtStrategy } from 'src/authentication/jwt.strategy';
-import { LocalStrategy } from 'src/authentication/local.strategy';
+import { AuthenticationService } from 'src/authentication/services/authentication.service';
+import { JwtStrategy } from 'src/authentication/services/jwt.strategy';
+import { LocalStrategy } from 'src/authentication/services/local.strategy';
 import { UsersModule } from 'src/users/users.module';
-import { AuthenticationController } from './authentication.controller';
+import { AuthenticationController } from './controllers/authentication.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { SessionSerializer } from 'src/authentication/session.serializer';
 
 @Module({
   imports: [
@@ -19,12 +18,6 @@ import { SessionSerializer } from 'src/authentication/session.serializer';
     }),
   ],
   controllers: [AuthenticationController],
-  providers: [
-    AuthenticationService,
-    LocalStrategy,
-    JwtStrategy,
-    Logger,
-    SessionSerializer,
-  ],
+  providers: [AuthenticationService, LocalStrategy, JwtStrategy, Logger],
 })
 export class AuthenticationModule {}

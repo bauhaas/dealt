@@ -6,6 +6,7 @@ const config: Config.InitialOptions = {
   moduleNameMapper: {
     '^src/(.*)$': '<rootDir>/src/$1',
     '^prisma/(.*)$': '<rootDir>/prisma/$1',
+    '^utils/(.*)$': '<rootDir>/utils/$1',
   },
 };
 

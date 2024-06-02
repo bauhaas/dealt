@@ -6,9 +6,9 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { AuthenticationService } from 'src/authentication/authentication.service';
-import { LocalAuthGuard } from 'src/authentication/local-auth.guard';
-import { UsersService } from 'src/users/users.service';
+import { AuthenticationService } from 'src/authentication/services/authentication.service';
+import { LocalAuthGuard } from 'src/authentication/guards/local-auth.guard';
+import { UsersService } from 'src/users/services/users.service';
 
 @Controller('authentication')
 export class AuthenticationController {

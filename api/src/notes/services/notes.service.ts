@@ -1,10 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Note } from '@prisma/client';
 import { CreateNoteRequestDto } from 'src/notes/dtos/createNoteRequest.dto';
 import { PatchNoteRequestDto } from 'src/notes/dtos/patchNoteRequest.dto';
-import { NotesRepository } from 'src/notes/notes.repository';
-import { Result } from 'src/result';
-import { UsersService } from 'src/users/users.service';
+import { NotesRepository } from 'src/notes/repositories/notes.repository';
+import { Result } from 'utils/result';
+import { UsersService } from 'src/users/services/users.service';
 
 type NoteError =
   | 'NOTE_CREATION_FAILED'

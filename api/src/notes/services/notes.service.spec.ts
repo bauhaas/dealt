@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotesRepository } from 'src/notes/notes.repository';
+import { NotesRepository } from 'src/notes/repositories/notes.repository';
 import { NotesService } from './notes.service';
 import { DeepMockProxy, mockClear, mockDeep } from 'jest-mock-extended';
 import { NotesModule } from 'src/notes/notes.module';
 import { UsersModule } from 'src/users/users.module';
-import { UsersRepository } from 'src/users/users.repository';
-import { UsersService } from 'src/users/users.service';
+import { UsersRepository } from 'src/users/repositories/users.repository';
+import { UsersService } from 'src/users/services/users.service';
 
 const user = {
   id: 1,
-  email: 'john.doe@delt.fr',
+  email: 'john.doe@dealt.fr',
   name: null,
   password: 'password',
   createdAt: new Date(),
