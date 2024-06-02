@@ -1,7 +1,7 @@
 "use client";
 
 import { useNoteContext } from "@/app/NoteContext";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, Pen, PlusIcon, Trash2 } from "lucide-react";
 import {
@@ -56,28 +56,10 @@ export const Sidebar = () => {
     setEditNoteId(null);
   };
 
-  const getDisplayFallback = (name: string) => {
-    if (name)
-      return name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase();
-  };
-
   return (
-    <aside className="min-h-full w-1/5 bg-slate-800 p-6">
-      <div className="mb-6 flex items-center space-x-2">
-        <Avatar>
-          <AvatarFallback>
-            {getDisplayFallback(session.data?.user.email)}
-          </AvatarFallback>
-        </Avatar>
-        <span className="no-wrap font-semibold text-white">
-          {session.data?.user.email}
-        </span>
-      </div>
-      <ul>
+    <aside className="fixed left-0 top-0 flex h-full w-1/5 flex-col bg-slate-800 p-6">
+      <UserInformation />
+      <ul className="overflow-auto">
         {notes.map((note: Note) => (
           <li
             key={note.id}
@@ -87,8 +69,8 @@ export const Sidebar = () => {
             className={` ${
               note.id === currentNote?.id
                 ? "bg-slate-500 text-black"
-                : "text-gray-300"
-            } group flex w-full flex-row items-center justify-between rounded bg-slate-800 p-2 hover:bg-slate-600 hover:text-gray-50`}
+                : "bg-slate-800 text-gray-300"
+            } group flex w-full flex-row items-center justify-between rounded p-2 hover:bg-slate-600 hover:text-gray-50`}
           >
             {editNoteId === note.id ? (
               <input
@@ -145,14 +127,55 @@ export const Sidebar = () => {
             </TooltipProvider>
           </li>
         ))}
-        <Button
-          className="w-full justify-start rounded bg-slate-800 p-2 text-center font-bold text-gray-300 hover:bg-slate-600 hover:text-gray-50"
-          onClick={() => addNote({ title: "Untitled", content: "" })}
-        >
-          <PlusIcon className="mr-2 h-6 w-6" />
-          New Note
-        </Button>
       </ul>
+      <NewNoteButton />
     </aside>
+  );
+};
+
+const UserInformation = () => {
+  const session = useSession();
+
+  const getDisplayFallback = (name: string) => {
+    if (name)
+      return name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase();
+  };
+
+  return (
+    <div className="mb-6 flex items-center space-x-2">
+      <Avatar>
+        <AvatarFallback>
+          {getDisplayFallback(session.data?.user.email)}
+        </AvatarFallback>
+      </Avatar>
+      <span className="no-wrap font-semibold text-white">
+        {session.data?.user.email}
+      </span>
+    </div>
+  );
+};
+
+const NewNoteButton = () => {
+  const { addNote } = useNoteContext();
+
+  const handleOnClick = () => {
+    addNote({
+      title: "Untitled",
+      content: "",
+    });
+  };
+
+  return (
+    <Button
+      className="mt-2 w-full justify-start rounded bg-slate-800 p-2 text-center font-bold text-gray-300 hover:bg-slate-600 hover:text-gray-50"
+      onClick={handleOnClick}
+    >
+      <PlusIcon className="mr-2 h-6 w-6" />
+      New Note
+    </Button>
   );
 };

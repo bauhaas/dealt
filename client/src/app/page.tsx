@@ -7,9 +7,11 @@ import Note from "@/app/note";
 export default function Home() {
   return (
     <NoteProvider>
-      <div className="flex h-screen">
+      <div className="flex h-screen overflow-hidden">
         <Sidebar />
-        <Note />
+        <div className="ml-[20%] h-full flex-1 overflow-hidden">
+          <Note />
+        </div>
       </div>
     </NoteProvider>
   );

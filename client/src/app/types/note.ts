@@ -1,6 +1,6 @@
 // types/note.ts
-export interface Note {
+export type Note = {
   id?: string;
   title: string;
   content: string;
-}
+};
