@@ -4,7 +4,6 @@ import { getSession } from "next-auth/react";
 
 const useNotesApi = () => {
   const fetchNotes = async (): Promise<Note[]> => {
-    console.log("fetchNotes");
     const session = await getSession();
     if (!session) {
       throw new Error("Session or access token is missing");
@@ -18,7 +17,6 @@ const useNotesApi = () => {
   };
 
   const createNote = async (note: Note): Promise<Note> => {
-    console.log("createNote");
     const session = await getSession();
     if (!session) {
       throw new Error("Session or access token is missing");
@@ -43,7 +41,7 @@ const useNotesApi = () => {
         headers: {
           Authorization: `Bearer ${session.user.token}`,
         },
-      }
+      },
     );
     return response.data;
   };

@@ -19,19 +19,16 @@ const authOptions: NextAuthOptions = {
             {
               email: credentials?.email,
               password: credentials?.password,
-            }
+            },
           );
 
-          console.log(response.data.access_token);
           if (response.data) {
             const decodedToken = jwtDecode(response.data.access_token);
             return { ...decodedToken, accessToken: response.data.access_token };
           }
           return null;
         } catch (error) {
-          console.error("tt");
           console.error(error);
-          console.error("tt");
           return null;
         }
       },
@@ -39,7 +36,6 @@ const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn(user) {
-      console.log("User signed in:", user);
       return true;
     },
     async jwt({ token, user }) {

@@ -36,7 +36,6 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
       }
       setNotes(notesData);
     };
-    console.log("fectnotes");
     loadNotes();
   }, []);
 
@@ -47,11 +46,9 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateNote = async (note: Note) => {
-    console.log("update note", note);
     const updatedNote = await updateNoted(note);
     setNotes(notes.map((n) => (n.id === note.id ? updatedNote : n)));
     if (currentNote && updatedNote.id === currentNote.id) {
-      console.log(updatedNote);
       setCurrentNote(updatedNote);
     }
   };
