@@ -2,6 +2,9 @@ import { useNoteContext } from "@/app/NoteContext";
 import { useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import withAuth from "@/hoc/withAuth";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
+import { NewNoteButton } from "@/components/NewNoteButton";
 
 const Note = () => {
   const { currentNote, updateNote } = useNoteContext();
@@ -33,9 +36,23 @@ const Note = () => {
     debouncedUpdateNote(updatedNote);
   };
 
-  if (!note) return <div className="w-3/4 p-4">Select a note to edit</div>;
+  if (!note)
+    return (
+      <div className="h-full content-center">
+        <div className="flex flex-col items-center space-y-4 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
+            No notes yet
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400">
+            Click the "New Note" button to create your first note.
+          </p>
+          <div className="w-fit">
+            <NewNoteButton />
+          </div>
+        </div>
+      </div>
+    );
 
-  console.log("rerender");
   return (
     <div className="h-full flex-1 pl-6">
       <input

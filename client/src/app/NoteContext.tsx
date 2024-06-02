@@ -59,6 +59,14 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const deleteNote = async (id: string) => {
     await deleteNoted(id);
     setNotes(notes.filter((n) => n.id !== id));
+    if (currentNote?.id === id) {
+      const index = notes.findIndex((n) => n.id === id);
+      if (index > 0) {
+        setCurrentNote(notes[index - 1]);
+      } else {
+        setCurrentNote(null);
+      }
+    }
   };
 
   return (

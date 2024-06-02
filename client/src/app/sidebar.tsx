@@ -20,6 +20,7 @@ import {
 import { useRef, useState } from "react";
 import { Note } from "@/app/types/note";
 import { useSession } from "next-auth/react";
+import { NewNoteButton } from "@/components/NewNoteButton";
 
 export const Sidebar = () => {
   return (
@@ -56,32 +57,6 @@ const UserInformation = () => {
     </div>
   );
 };
-
-const NewNoteButton = () => {
-  const { addNote } = useNoteContext();
-
-  const handleOnClick = () => {
-    addNote({
-      title: "Untitled",
-      content: "",
-    });
-  };
-
-  return (
-    <Button
-      className="mt-2 w-full justify-start rounded bg-slate-800 p-2 text-center font-bold text-gray-300 hover:bg-slate-600 hover:text-gray-50"
-      onClick={handleOnClick}
-    >
-      <PlusIcon className="mr-2 h-6 w-6" />
-      New Note
-    </Button>
-  );
-};
-
-interface NoteTooltipProps {
-  note: Note;
-  handleRename: (noteId: string, title: string) => void;
-}
 
 const NotesList = () => {
   const { notes, currentNote, setCurrentNote, updateNote } = useNoteContext();
@@ -147,6 +122,11 @@ const NotesList = () => {
     </ul>
   );
 };
+
+interface NoteTooltipProps {
+  note: Note;
+  handleRename: (noteId: string, title: string) => void;
+}
 
 const NoteTooltip = ({ note, handleRename }: NoteTooltipProps) => {
   const { deleteNote } = useNoteContext();
