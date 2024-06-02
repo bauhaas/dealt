@@ -28,33 +28,15 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const [currentNote, setCurrentNote] = useState<Note | null>(null);
   const { fetchNotes, createNote, updateNoted, deleteNoted } = useNotesApi();
 
-  // useEffect(() => {
-  //   const fetchNotes = async () => {
-  //     try {
-  //       const session = await getSession();
-  //       if (session && session.user && session.user.accessToken) {
-  //         const response = await axios.get("http://localhost:3001/notes", {
-  //           headers: {
-  //             Authorization: `Bearer ${session.user.accessToken}`,
-  //           },
-  //         });
-  //         setNotes(response.data);
-  //       } else {
-  //         console.error("No access token found in session.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching notes:", error);
-  //     }
-  //   };
-
-  //   fetchNotes();
-  // }, []);
-
   useEffect(() => {
     const loadNotes = async () => {
       const notesData = await fetchNotes();
+      if (notesData.length > 0) {
+        setCurrentNote(notesData[0]);
+      }
       setNotes(notesData);
     };
+    console.log("fectnotes");
     loadNotes();
   }, []);
 
@@ -65,10 +47,13 @@ export const NoteProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateNote = async (note: Note) => {
+    console.log("update note", note);
     const updatedNote = await updateNoted(note);
     setNotes(notes.map((n) => (n.id === note.id ? updatedNote : n)));
-    if (currentNote && updatedNote.id === currentNote.id)
+    if (currentNote && updatedNote.id === currentNote.id) {
+      console.log(updatedNote);
       setCurrentNote(updatedNote);
+    }
   };
 
   const deleteNote = async (id: string) => {

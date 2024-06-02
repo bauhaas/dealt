@@ -1,5 +1,7 @@
 import { useNoteContext } from "@/app/NoteContext";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { debounce } from "lodash";
+import withAuth from "@/hoc/withAuth";
 
 const Note = () => {
   const { notes, setCurrentNote, currentNote, updateNote, addNote } =
@@ -7,31 +9,41 @@ const Note = () => {
   const [note, setNote] = useState(currentNote);
 
   useEffect(() => {
-    // If there's no current note but there are notes available, set the first note as the current note
-    if (!currentNote && notes.length > 0) {
-      setCurrentNote(notes[0]);
-    }
+    console.log("useffect");
+    console.log("currentNote", currentNote);
     setNote(currentNote);
-  }, [currentNote, notes]);
+  }, [currentNote]);
+
+  const debouncedUpdateNote = useCallback(
+    debounce((updatedNote) => {
+      updateNote(updatedNote);
+    }, 300), // Adjust the debounce delay as needed
+    []
+  );
 
   if (!note) return <div className="w-3/4 p-4">Select a note to edit</div>;
 
+  console.log("rerender");
   return (
     <div className="flex-1 p-6">
       <input
         type="text"
         value={note.title}
         onChange={(e) => {
-          setNote({ ...note, title: e.target.value });
-          updateNote(note);
+          const updatedNote = { ...note, title: e.target.value };
+          setNote(updatedNote);
+          // debouncedUpdateNote(updatedNote);
+          updateNote(updatedNote);
         }}
         className="w-full p-2 text-2xl font-bold focus:outline-none focus:ring-0 focus:border-none"
       />
       <textarea
         value={note.content}
         onChange={(e) => {
-          setNote({ ...note, content: e.target.value });
-          updateNote(note);
+          const updatedNote = { ...note, content: e.target.value };
+          setNote(updatedNote);
+          debouncedUpdateNote(updatedNote);
+          // updateNote(updatedNote);
         }}
         className="w-full h-full p-2 focus:outline-none focus:ring-0 focus:border-none"
       />
@@ -39,4 +51,4 @@ const Note = () => {
   );
 };
 
-export default Note;
+export default withAuth(Note);
