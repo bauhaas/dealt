@@ -65,17 +65,15 @@ export const Sidebar = () => {
         .toUpperCase();
   };
 
-  console.log("render sidebar");
-  console.log(session);
   return (
-    <aside className="w-1/5 bg-slate-800 p-6 min-h-full">
-      <div className="flex items-center space-x-2 mb-6">
+    <aside className="min-h-full w-1/5 bg-slate-800 p-6">
+      <div className="mb-6 flex items-center space-x-2">
         <Avatar>
           <AvatarFallback>
             {getDisplayFallback(session.data?.user.email)}
           </AvatarFallback>
         </Avatar>
-        <span className="font-semibold text-white no-wrap">
+        <span className="no-wrap font-semibold text-white">
           {session.data?.user.email}
         </span>
       </div>
@@ -90,7 +88,7 @@ export const Sidebar = () => {
               note.id === currentNote?.id
                 ? "bg-slate-500 text-black"
                 : "text-gray-300"
-            } group flex flex-row justify-between items-center  hover:text-gray-50 hover:bg-slate-600 rounded p-2 w-full  bg-slate-800`}
+            } group flex w-full flex-row items-center justify-between rounded bg-slate-800 p-2 hover:bg-slate-600 hover:text-gray-50`}
           >
             {editNoteId === note.id ? (
               <input
@@ -104,7 +102,7 @@ export const Sidebar = () => {
                     handleRenameSubmit(note.id);
                   }
                 }}
-                className="w-full  bg-slate-800 text-white px-1"
+                className="w-full bg-slate-800 px-1 text-white"
               />
             ) : (
               <p className="truncate">{note.title}</p>
@@ -133,7 +131,7 @@ export const Sidebar = () => {
                             deleteNote(note.id);
                           }
                         }}
-                        className="text-red-500 text-md focus:text-red-500"
+                        className="text-md text-red-500 focus:text-red-500"
                       >
                         <Trash2 /> Delete
                       </DropdownMenuItem>
@@ -148,10 +146,10 @@ export const Sidebar = () => {
           </li>
         ))}
         <Button
-          className=" text-gray-300 font-bold text-center hover:text-gray-50 hover:bg-slate-600 rounded p-2 w-full justify-start bg-slate-800"
+          className="w-full justify-start rounded bg-slate-800 p-2 text-center font-bold text-gray-300 hover:bg-slate-600 hover:text-gray-50"
           onClick={() => addNote({ title: "Untitled", content: "" })}
         >
-          <PlusIcon className="w-6 h-6 mr-2" />
+          <PlusIcon className="mr-2 h-6 w-6" />
           New Note
         </Button>
       </ul>
