@@ -1,4 +1,5 @@
 import ClientLayout from "@/app/ClientLayout";
+import { TailwindSizeIndicator } from "@/lib/tailwindSizeIndicator";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -20,7 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ClientLayout>{children}</ClientLayout>
+        <ClientLayout>
+          <TailwindSizeIndicator />
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );

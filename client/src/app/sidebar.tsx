@@ -22,16 +22,70 @@ import { Note } from "@/app/types/note";
 import { useSession } from "next-auth/react";
 
 export const Sidebar = () => {
-  const {
-    notes,
-    setCurrentNote,
-    currentNote,
-    addNote,
-    deleteNote,
-    updateNote,
-  } = useNoteContext();
+  return (
+    <aside className="fixed left-0 top-0 flex h-full w-1/5 flex-col bg-slate-800 p-6">
+      <UserInformation />
+      <NotesList />
+      <NewNoteButton />
+    </aside>
+  );
+};
 
+const UserInformation = () => {
   const session = useSession();
+
+  const getDisplayFallback = (name: string) => {
+    if (name)
+      return name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase();
+  };
+
+  return (
+    <div className="mb-6 flex items-center space-x-2">
+      <Avatar>
+        <AvatarFallback>
+          {getDisplayFallback(session.data?.user.email)}
+        </AvatarFallback>
+      </Avatar>
+      <span className="no-wrap truncate font-semibold text-white">
+        {session.data?.user.email}
+      </span>
+    </div>
+  );
+};
+
+const NewNoteButton = () => {
+  const { addNote } = useNoteContext();
+
+  const handleOnClick = () => {
+    addNote({
+      title: "Untitled",
+      content: "",
+    });
+  };
+
+  return (
+    <Button
+      className="mt-2 w-full justify-start rounded bg-slate-800 p-2 text-center font-bold text-gray-300 hover:bg-slate-600 hover:text-gray-50"
+      onClick={handleOnClick}
+    >
+      <PlusIcon className="mr-2 h-6 w-6" />
+      New Note
+    </Button>
+  );
+};
+
+interface NoteTooltipProps {
+  note: Note;
+  handleRename: (noteId: string, title: string) => void;
+}
+
+const NotesList = () => {
+  const { notes, currentNote, setCurrentNote, updateNote } = useNoteContext();
+
   const [editNoteId, setEditNoteId] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
 
@@ -57,125 +111,82 @@ export const Sidebar = () => {
   };
 
   return (
-    <aside className="fixed left-0 top-0 flex h-full w-1/5 flex-col bg-slate-800 p-6">
-      <UserInformation />
-      <ul className="overflow-auto">
-        {notes.map((note: Note) => (
-          <li
-            key={note.id}
-            onClick={() => {
-              setCurrentNote(note);
-            }}
-            className={` ${
-              note.id === currentNote?.id
-                ? "bg-slate-500 text-black"
-                : "bg-slate-800 text-gray-300"
-            } group flex w-full flex-row items-center justify-between rounded p-2 hover:bg-slate-600 hover:text-gray-50`}
-          >
-            {editNoteId === note.id ? (
-              <input
-                ref={inputRef}
-                type="text"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                onBlur={() => handleRenameSubmit(note.id)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleRenameSubmit(note.id);
+    <ul className="overflow-auto">
+      {notes.map((note: Note) => (
+        <li
+          key={note.id}
+          onClick={() => {
+            setCurrentNote(note);
+          }}
+          className={` ${
+            note.id === currentNote?.id
+              ? "bg-slate-500 text-black"
+              : "bg-slate-800 text-gray-300"
+          } group flex w-full flex-row items-center justify-between rounded p-2 hover:bg-slate-600 hover:text-gray-50`}
+        >
+          {editNoteId === note.id ? (
+            <input
+              ref={inputRef}
+              type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              onBlur={() => handleRenameSubmit(note.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleRenameSubmit(note.id);
+                }
+              }}
+              className="w-full bg-slate-800 px-1 text-white"
+            />
+          ) : (
+            <p className="truncate">{note.title}</p>
+          )}
+          <NoteTooltip note={note} handleRename={handleRename} />
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+const NoteTooltip = ({ note, handleRename }: NoteTooltipProps) => {
+  const { deleteNote } = useNoteContext();
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="invisible group-hover:visible">
+              <Ellipsis />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRename(note.id, note.title);
+                }}
+                className="text-md"
+              >
+                <Pen /> Rename
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (note.id) {
+                    deleteNote(note.id);
                   }
                 }}
-                className="w-full bg-slate-800 px-1 text-white"
-              />
-            ) : (
-              <p className="truncate">{note.title}</p>
-            )}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="invisible group-hover:visible">
-                      <Ellipsis />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRename(note.id, note.title);
-                        }}
-                        className="text-md"
-                      >
-                        <Pen /> Rename
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (note.id) {
-                            deleteNote(note.id);
-                          }
-                        }}
-                        className="text-md text-red-500 focus:text-red-500"
-                      >
-                        <Trash2 /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Options</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </li>
-        ))}
-      </ul>
-      <NewNoteButton />
-    </aside>
-  );
-};
-
-const UserInformation = () => {
-  const session = useSession();
-
-  const getDisplayFallback = (name: string) => {
-    if (name)
-      return name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase();
-  };
-
-  return (
-    <div className="mb-6 flex items-center space-x-2">
-      <Avatar>
-        <AvatarFallback>
-          {getDisplayFallback(session.data?.user.email)}
-        </AvatarFallback>
-      </Avatar>
-      <span className="no-wrap font-semibold text-white">
-        {session.data?.user.email}
-      </span>
-    </div>
-  );
-};
-
-const NewNoteButton = () => {
-  const { addNote } = useNoteContext();
-
-  const handleOnClick = () => {
-    addNote({
-      title: "Untitled",
-      content: "",
-    });
-  };
-
-  return (
-    <Button
-      className="mt-2 w-full justify-start rounded bg-slate-800 p-2 text-center font-bold text-gray-300 hover:bg-slate-600 hover:text-gray-50"
-      onClick={handleOnClick}
-    >
-      <PlusIcon className="mr-2 h-6 w-6" />
-      New Note
-    </Button>
+                className="text-md text-red-500 focus:text-red-500"
+              >
+                <Trash2 /> Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Options</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
