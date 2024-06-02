@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRef, useState } from "react";
 import { Note } from "@/app/types/note";
+import { useSession } from "next-auth/react";
 
 export const Sidebar = () => {
   const {
@@ -30,6 +31,7 @@ export const Sidebar = () => {
     updateNote,
   } = useNoteContext();
 
+  const session = useSession();
   const [editNoteId, setEditNoteId] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
 
@@ -54,13 +56,28 @@ export const Sidebar = () => {
     setEditNoteId(null);
   };
 
+  const getDisplayFallback = (name: string) => {
+    if (name)
+      return name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase();
+  };
+
+  console.log("render sidebar");
+  console.log(session);
   return (
-    <aside className="w-1/4 bg-slate-800 p-6">
+    <aside className="w-1/5 bg-slate-800 p-6 min-h-full">
       <div className="flex items-center space-x-2 mb-6">
         <Avatar>
-          <AvatarFallback>U</AvatarFallback>
+          <AvatarFallback>
+            {getDisplayFallback(session.data?.user.email)}
+          </AvatarFallback>
         </Avatar>
-        <span className="font-semibold text-white">dusername</span>
+        <span className="font-semibold text-white no-wrap">
+          {session.data?.user.email}
+        </span>
       </div>
       <ul>
         {notes.map((note: Note) => (
@@ -71,7 +88,7 @@ export const Sidebar = () => {
             }}
             className={` ${
               note.id === currentNote?.id
-                ? "bg-slate-600 text-black"
+                ? "bg-slate-500 text-black"
                 : "text-gray-300"
             } group flex flex-row justify-between items-center  hover:text-gray-50 hover:bg-slate-600 rounded p-2 w-full  bg-slate-800`}
           >
@@ -90,7 +107,7 @@ export const Sidebar = () => {
                 className="w-full  bg-slate-800 text-white px-1"
               />
             ) : (
-              <>{note.title}</>
+              <p className="truncate">{note.title}</p>
             )}
             <TooltipProvider>
               <Tooltip>
