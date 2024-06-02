@@ -58,6 +58,10 @@ const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  session: {
+    strategy: "jwt",
+    maxAge: 4 * 60 * 60,
+  },
 };
 
 const handler = NextAuth(authOptions);

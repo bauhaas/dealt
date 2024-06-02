@@ -25,7 +25,7 @@ const useAuthenticationWithCredsForm = () => {
         "http://localhost:3001/authentication/signup",
         values
       );
-      console.log("Signup successful:", response.data);
+      router.push("/");
     } catch (error) {
       console.error("Signup failed:", error);
     }
