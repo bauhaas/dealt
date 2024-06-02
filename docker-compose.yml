@@ -33,8 +33,6 @@ services:
       - postgres
     env_file:
       - .env
-    # networks:
-    #   - my-network
 
   client:
     build:
@@ -49,11 +47,6 @@ services:
       - "3000:3000"
     depends_on:
       - api
-    # networks:
-    #   - my-network
 
 volumes:
   pgdata:
-# networks:
-#   my-network:
-#     driver: bridge
