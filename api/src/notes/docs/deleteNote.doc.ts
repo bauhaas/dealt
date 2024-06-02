@@ -5,9 +5,17 @@ export const DeleteNoteApiOperation = {
 export const DeleteNoteApiNoContentResponse = {
   status: 204,
   description: 'Note deleted',
+};
+export const DeleteNoteApiForbiddenResponse = {
+  status: 403,
+  description: 'Forbidden',
   content: {
     'application/json': {
-      example: [],
+      example: {
+        statusCode: 403,
+        message: 'NOTE_ACCESS_FORBIDDEN',
+        error: 'Forbidden',
+      },
     },
   },
 };

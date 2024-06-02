@@ -10,7 +10,7 @@ export const CreateUserApiBody: ApiBodyOptions = {
   examples: {
     'Create a user': {
       value: {
-        email: 'john.doe@dealt.com',
+        email: 'john.doe@dealt.fr',
         password: 'password',
       },
     },
@@ -24,7 +24,7 @@ export const CreateUserApiOkResponse = {
     'application/json': {
       example: {
         id: 1,
-        email: 'john.doe@dealt.com',
+        email: 'john.doe@dealt.fr',
       },
     },
   },

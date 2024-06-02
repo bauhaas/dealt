@@ -4,6 +4,7 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  HttpCode,
   InternalServerErrorException,
   Logger,
   NotFoundException,
@@ -16,7 +17,9 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiForbiddenResponse,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -31,13 +34,16 @@ import {
   CreateNoteApiOperation,
 } from 'src/notes/docs/createNote.doc';
 import {
+  DeleteNoteApiForbiddenResponse,
   DeleteNoteApiNoContentResponse,
   DeleteNoteApiOperation,
 } from 'src/notes/docs/deleteNote.doc';
 import {
   PatchNoteApiBody,
+  PatchNoteApiNotFoundResponse,
   PatchNoteApiOkResponse,
   PatchNoteApiOperation,
+  PathNoteApiForbiddenResponse,
 } from 'src/notes/docs/patchNote.doc';
 import { CreateNoteRequestDto } from 'src/notes/dtos/createNoteRequest.dto';
 import { PatchNoteRequestDto } from 'src/notes/dtos/patchNoteRequest.dto';
@@ -104,6 +110,8 @@ export class NotesController {
   @ApiOperation(PatchNoteApiOperation)
   @ApiBody(PatchNoteApiBody)
   @ApiOkResponse(PatchNoteApiOkResponse)
+  @ApiNotFoundResponse(PatchNoteApiNotFoundResponse)
+  @ApiForbiddenResponse(PathNoteApiForbiddenResponse)
   @ApiParam({ name: 'id', required: true })
   async updateNote(
     @Param('id') id: string,
@@ -132,10 +140,12 @@ export class NotesController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard, ScopesGuard)
   @RequiredScopes(['notes_delete'])
   @ApiOperation(DeleteNoteApiOperation)
   @ApiNoContentResponse(DeleteNoteApiNoContentResponse)
+  @ApiForbiddenResponse(DeleteNoteApiForbiddenResponse)
   @ApiParam({ name: 'id', required: true })
   async deleteNote(@Param('id') id: string, @Req() req: any) {
     return (

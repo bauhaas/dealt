@@ -39,3 +39,31 @@ export const PatchNoteApiOkResponse = {
     },
   },
 };
+
+export const PatchNoteApiNotFoundResponse = {
+  status: 404,
+  description: 'Note not found',
+  content: {
+    'application/json': {
+      example: {
+        statusCode: 404,
+        message: 'NOTE_NOT_FOUND',
+        error: 'Not Found',
+      },
+    },
+  },
+};
+
+export const PathNoteApiForbiddenResponse = {
+  status: 403,
+  description: 'Forbidden',
+  content: {
+    'application/json': {
+      example: {
+        statusCode: 403,
+        message: 'NOTE_ACCESS_FORBIDDEN',
+        error: 'Forbidden',
+      },
+    },
+  },
+};

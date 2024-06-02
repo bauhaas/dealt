@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { UsersRepository } from 'src/users/users.repository';
@@ -9,14 +9,11 @@ type CreateUserError = 'USER_CREATION_FAILED';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly usersRepository: UsersRepository,
-    private logger: Logger,
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async createUser(
     data: CreateUserRequestDto,
-  ): Promise<Result<User, CreateUserError>> {
+  ): Promise<Result<Omit<User, 'password'>, CreateUserError>> {
     try {
       const hashedPassword = await bcrypt.hash(data.password, 10);
 
@@ -25,12 +22,17 @@ export class UsersService {
         password: hashedPassword,
       });
 
-      return Result.ok(user);
+      const userWithoutPassword = await this.usersRepository.excludePassword(
+        user,
+      );
+
+      return Result.ok(userWithoutPassword);
     } catch (error) {
       return Result.err('USER_CREATION_FAILED');
     }
   }
 
+  //omit password from user object
   async findOneByEmail(email: string): Promise<User | null> {
     return await this.usersRepository.findByEmail(email);
   }

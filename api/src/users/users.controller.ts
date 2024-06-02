@@ -3,7 +3,6 @@ import {
   ConflictException,
   Controller,
   InternalServerErrorException,
-  Logger,
   Post,
 } from '@nestjs/common';
 import {
@@ -27,7 +26,7 @@ import { UsersService } from 'src/users/users.service';
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService, private logger: Logger) {}
+  constructor(private usersService: UsersService) {}
 
   @Post()
   @ApiOperation(CreateUserApiOperation)
@@ -41,10 +40,14 @@ export class UsersController {
         return user;
       },
       (error) => {
-        if (error === 'USER_CREATION_FAILED')
-          throw new ConflictException(error);
-
-        throw new InternalServerErrorException('An unexpected error occurred');
+        switch (error) {
+          case 'USER_CREATION_FAILED':
+            throw new ConflictException(error);
+          default:
+            throw new InternalServerErrorException(
+              'An unexpected error occurred',
+            );
+        }
       },
     );
   }
