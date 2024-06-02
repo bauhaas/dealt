@@ -12,6 +12,14 @@ export class NotesRepository {
     });
   }
 
+  async getNoteById(id: number) {
+    return this.prisma.note.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
   async getAllNotesByUserId(userId: number) {
     return this.prisma.note.findMany({
       where: {

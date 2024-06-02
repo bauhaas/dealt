@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   InternalServerErrorException,
   Logger,
@@ -55,16 +56,21 @@ export class NotesController {
   @ApiBody(CreateNoteApiBody)
   @ApiOkResponse(CreateNoteApiOkResponse)
   async createNote(@Body() data: CreateNoteRequestDto, @Req() req: any) {
-    this.logger.debug(req.user);
     return (await this.notesService.createNote(data, req.user.id)).mapOrElse(
       (res) => {
         return res;
       },
       (error) => {
-        if (error === 'USER_NOT_FOUND') throw new NotFoundException(error);
-        else if (error === 'NOTE_CREATION_FAILED')
-          throw new InternalServerErrorException(error);
-        throw new InternalServerErrorException('An unexpected error occurred');
+        switch (error) {
+          case 'USER_NOT_FOUND':
+            throw new NotFoundException(error);
+          case 'NOTE_CREATION_FAILED':
+            throw new InternalServerErrorException(error);
+          default:
+            throw new InternalServerErrorException(
+              'An unexpected error occurred',
+            );
+        }
       },
     );
   }
@@ -80,8 +86,14 @@ export class NotesController {
         return res;
       },
       (error) => {
-        if (error === 'USER_NOT_FOUND') throw new NotFoundException(error);
-        throw new InternalServerErrorException('An unexpected error occurred');
+        switch (error) {
+          case 'USER_NOT_FOUND':
+            throw new NotFoundException(error);
+          default:
+            throw new InternalServerErrorException(
+              'An unexpected error occurred',
+            );
+        }
       },
     );
   }
@@ -93,14 +105,23 @@ export class NotesController {
   @ApiBody(PatchNoteApiBody)
   @ApiOkResponse(PatchNoteApiOkResponse)
   @ApiParam({ name: 'id', required: true })
-  async updateNote(@Param('id') id: string, @Body() data: PatchNoteRequestDto) {
-    this.logger.debug(id);
-    return (await this.notesService.patchNote(Number(id), data)).mapOrElse(
+  async updateNote(
+    @Param('id') id: string,
+    @Req() req: any,
+    @Body() data: PatchNoteRequestDto,
+  ) {
+    return (
+      await this.notesService.patchNote(Number(id), req.user.id, data)
+    ).mapOrElse(
       (res) => {
         return res;
       },
       (error) => {
         switch (error) {
+          case 'NOTE_NOT_FOUND':
+            throw new NotFoundException(error);
+          case 'NOTE_ACCESS_FORBIDDEN':
+            throw new ForbiddenException(error);
           default:
             throw new InternalServerErrorException(
               'An unexpected error occurred',
@@ -116,14 +137,17 @@ export class NotesController {
   @ApiOperation(DeleteNoteApiOperation)
   @ApiNoContentResponse(DeleteNoteApiNoContentResponse)
   @ApiParam({ name: 'id', required: true })
-  async deleteNote(@Param('id') id: string) {
-    this.logger.debug(id);
-    return (await this.notesService.deleteNote(Number(id))).mapOrElse(
+  async deleteNote(@Param('id') id: string, @Req() req: any) {
+    return (
+      await this.notesService.deleteNote(Number(id), req.user.id)
+    ).mapOrElse(
       (res) => {
         return res;
       },
       (error) => {
         switch (error) {
+          case 'NOTE_ACCESS_FORBIDDEN':
+            throw new ForbiddenException(error);
           default:
             throw new InternalServerErrorException(
               'An unexpected error occurred',

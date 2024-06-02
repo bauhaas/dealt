@@ -9,13 +9,11 @@ import {
 import {
   ApiBody,
   ApiConflictResponse,
-  ApiExtraModels,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
 import {
   CreateUserApiBody,
   CreateUserApiConflictResponse,
@@ -38,7 +36,6 @@ export class UsersController {
   @ApiOkResponse(CreateUserApiOkResponse)
   @ApiInternalServerErrorResponse(CreateUserApiInternalServerErrorResponse)
   async createUser(@Body() data: CreateUserRequestDto) {
-    this.logger.debug(data);
     return (await this.usersService.createUser(data)).mapOrElse(
       (user) => {
         return user;

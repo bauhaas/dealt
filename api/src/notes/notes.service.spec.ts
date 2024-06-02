@@ -7,6 +7,22 @@ import { UsersModule } from 'src/users/users.module';
 import { UsersRepository } from 'src/users/users.repository';
 import { UsersService } from 'src/users/users.service';
 
+const user = {
+  id: 1,
+  email: 'john.doe@delt.fr',
+  name: null,
+  password: 'password',
+  createdAt: new Date(),
+};
+
+const note = {
+  id: 1,
+  title: 'title',
+  content: 'content',
+  authorId: 1,
+  createdAt: new Date(),
+};
+
 describe('NotesService', () => {
   let noteService: NotesService;
 
@@ -35,6 +51,8 @@ describe('NotesService', () => {
 
   afterEach(() => {
     mockClear(notesRepository);
+    mockClear(usersService);
+    mockClear(usersRepository);
     jest.clearAllMocks();
   });
 
@@ -42,59 +60,159 @@ describe('NotesService', () => {
     expect(noteService).toBeDefined();
   });
 
-  it('should create a note', async () => {
-    const data = {
-      title: 'title',
-      content: 'content',
-    };
+  describe('POST', () => {
+    it('should create a note', async () => {
+      const data = {
+        title: 'title',
+        content: 'content',
+      };
 
-    const user = {
-      id: 1,
-      email: 'john.doe@delt.fr',
-      name: null,
-      password: 'password',
-      createdAt: new Date(),
-    };
+      usersService.findOneById.mockResolvedValueOnce(user);
+      notesRepository.create.mockResolvedValueOnce(note);
 
-    usersService.findOneById.mockResolvedValueOnce(user);
+      const result = await noteService.createNote(data, user.id);
 
-    notesRepository.create.mockResolvedValueOnce({
-      id: 1,
-      title: 'title',
-      content: 'content',
-      authorId: 1,
-      createdAt: new Date(),
+      expect(result.isOk()).toBe(true);
+      expect(result.unwrap()).toEqual({
+        ...note,
+        createdAt: expect.any(Date),
+      });
+      expect(notesRepository.create).toHaveBeenCalledWith({
+        title: 'title',
+        content: 'content',
+        author: {
+          connect: {
+            id: 1,
+          },
+        },
+      });
     });
 
-    const result = await noteService.createNote(data, user.id);
+    it('should return USER_NOT_FOUND when creating a note', async () => {
+      const data = {
+        title: 'title',
+        content: 'content',
+      };
 
-    expect(result.isOk()).toBe(true);
-    expect(result.unwrap()).toEqual({
-      id: 1,
-      title: 'title',
-      content: 'content',
-      authorId: 1,
-      createdAt: expect.any(Date),
+      usersService.findOneById.mockResolvedValueOnce(null);
+
+      const result = await noteService.createNote(data, 2);
+
+      expect(result.isErr()).toBe(true);
+      expect(result.unwrapErr()).toBe('USER_NOT_FOUND');
     });
   });
 
-  it('should return USER_NOT_FOUND when creating a note', async () => {
-    const data = {
-      title: 'title',
-      content: 'content',
-    };
+  describe('GET', () => {
+    it('should get all notes from a user', async () => {
+      usersService.findOneById.mockResolvedValueOnce(user);
 
-    usersService.findOneById.mockResolvedValueOnce(null);
+      notesRepository.getAllNotesByUserId.mockResolvedValueOnce([
+        {
+          id: 1,
+          title: 'title',
+          content: 'content',
+          authorId: 1,
+          createdAt: new Date(),
+        },
+      ]);
 
-    const result = await noteService.createNote(data, 2);
+      const result = await noteService.getAllNotes(1);
+      expect(result.isOk()).toBe(true);
+      expect(result.unwrap()).toEqual([
+        {
+          ...note,
+          createdAt: expect.any(Date),
+        },
+      ]);
+      expect(notesRepository.getAllNotesByUserId).toHaveBeenCalledWith(1);
+    });
 
-    expect(result.isErr()).toBe(true);
-    expect(result.unwrapErr()).toBe('USER_NOT_FOUND');
+    it('should return USER_NOT_FOUND when getting all notes from a user', async () => {
+      usersService.findOneById.mockResolvedValueOnce(null);
+
+      const result = await noteService.getAllNotes(2);
+
+      expect(result.isErr()).toBe(true);
+      expect(result.unwrapErr()).toBe('USER_NOT_FOUND');
+    });
   });
 
-  it('should get all notes from a user', async () => {});
+  describe('PATCH', () => {
+    it('should patch a note', async () => {
+      notesRepository.getNoteById.mockResolvedValueOnce(note);
 
-  it('should patch a note', async () => {});
+      notesRepository.patchNoteById.mockResolvedValueOnce({
+        ...note,
+        content: 'update content',
+      });
 
-  it('should delete a note', async () => {});
+      const result = await noteService.patchNote(1, 1, {
+        title: 'title',
+        content: 'update content',
+      });
+
+      expect(result.isOk()).toBe(true);
+      expect(result.unwrap()).toEqual({
+        ...note,
+        content: 'update content',
+        createdAt: expect.any(Date),
+      });
+      expect(notesRepository.patchNoteById).toHaveBeenCalledWith(1, {
+        title: 'title',
+        content: 'update content',
+      });
+    });
+    it('should return NOTE_NOT_FOUND when patching a non-existing note', async () => {
+      notesRepository.getNoteById.mockResolvedValueOnce(null);
+
+      const result = await noteService.patchNote(1, user.id, {
+        title: 'title',
+        content: 'update content',
+      });
+
+      expect(result.isErr()).toBe(true);
+      expect(result.unwrapErr()).toBe('NOTE_NOT_FOUND');
+    });
+
+    it('should return NOTE_ACCESS_FORBIDDEN if user who patches is not the note author', async () => {
+      notesRepository.getNoteById.mockResolvedValueOnce({
+        ...note,
+        authorId: 2,
+      });
+
+      const result = await noteService.patchNote(1, user.id, {
+        title: 'title',
+        content: 'update content',
+      });
+
+      expect(result.isErr()).toBe(true);
+      expect(result.unwrapErr()).toBe('NOTE_ACCESS_FORBIDDEN');
+    });
+  });
+
+  describe('DELETE', () => {
+    it('should delete a note', async () => {
+      notesRepository.getNoteById.mockResolvedValueOnce(note);
+      notesRepository.deleteNoteById.mockResolvedValueOnce(note);
+
+      const result = await noteService.deleteNote(1, user.id);
+
+      expect(result.isOk()).toBe(true);
+      expect(result.unwrap()).toEqual(undefined);
+      expect(notesRepository.deleteNoteById).toHaveBeenCalledWith(1);
+    });
+
+    it('should return NOTE_ACCESS_FORBIDDEN if user who deletes is not the note author', async () => {
+      notesRepository.getNoteById.mockResolvedValueOnce({
+        ...note,
+        authorId: 2,
+      });
+
+      const result = await noteService.deleteNote(1, user.id);
+
+      expect(result.isErr()).toBe(true);
+      expect(result.unwrapErr()).toBe('NOTE_ACCESS_FORBIDDEN');
+    });
+  });
 });
