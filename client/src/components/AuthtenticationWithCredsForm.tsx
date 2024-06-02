@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Image from "next/image";
 import Link from "next/link";
 
 interface AuthenticationWithCredsFormProps {
@@ -32,7 +33,13 @@ export default function AuthenticationWithCredsForm({
   handleChange,
 }: AuthenticationWithCredsFormProps) {
   return (
-    <div className="flex items-center bg-slate-600 h-screen w-full justify-center">
+    <div className="flex flex-col gap-10 items-center bg-slate-600 h-screen w-full justify-center">
+      <Image
+        src="/images/Dealt_logo.png"
+        alt="Dealt logo"
+        width={300}
+        height={200}
+      />
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">{title}</CardTitle>
