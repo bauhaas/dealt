@@ -24,7 +24,7 @@ export class ScopesGuard implements CanActivate {
     this.logger.debug('Required Scopes:', requiredScopes);
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    this.logger.debug('User in ScopesGuard:', user); // Debug log
+    this.logger.debug('User in ScopesGuard:', user);
 
     if (!user || !user.scopes) {
       return false;

@@ -8,19 +8,19 @@ const withAuth = (WrappedComponent: any) => {
     const router = useRouter();
 
     useEffect(() => {
-      if (status === "loading") return; // Do nothing while loading
-      if (!session) router.push("/signin"); // Redirect if no session
+      if (status === "loading") return;
+      if (!session) router.push("/signin");
     }, [session, status]);
 
     if (status === "loading" || !session) {
-      return <div>Loading...</div>; // Show a loading message while checking session
+      return <div>Loading...</div>; // should render loader skeleton here
     }
 
     return <WrappedComponent {...props} />;
   };
 
   WithAuthComponent.displayName = `WithAuth(${getDisplayName(
-    WrappedComponent
+    WrappedComponent,
   )})`;
 
   return WithAuthComponent;
