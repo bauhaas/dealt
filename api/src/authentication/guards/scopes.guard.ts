@@ -13,7 +13,6 @@ export class ScopesGuard implements CanActivate {
   constructor(private reflector: Reflector, private logger: Logger) {}
 
   canActivate(context: ExecutionContext): boolean {
-    this.logger.debug('Entering ScopesGuard');
     const requiredScopes = this.reflector.get<AvailableScope[]>(
       SCOPES_KEY,
       context.getHandler(),
