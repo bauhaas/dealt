@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import {
   createContext,
   useState,
@@ -8,9 +7,8 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { getSession } from "next-auth/react";
-import { Note } from "./types/note";
-import useNotesApi from "@/app/useNotesApi";
+import { Note } from "@/types/note";
+import NotesApiClient from "@/app/api/NotesApiClient";
 
 interface NoteContextType {
   notes: Note[];
@@ -26,44 +24,55 @@ const NoteContext = createContext<NoteContextType | null>(null);
 export const NoteProvider = ({ children }: { children: ReactNode }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [currentNote, setCurrentNote] = useState<Note | null>(null);
-  const { fetchNotes, createNote, updateNoted, deleteNoted } = useNotesApi();
+
+  const { fetchNotes, createNote, updateNoteA, deleteNoteA } = NotesApiClient;
 
   useEffect(() => {
     const loadNotes = async () => {
-      const notesData = await fetchNotes();
-      if (notesData.length > 0) {
-        setCurrentNote(notesData[0]);
-      }
-      setNotes(notesData);
+      try {
+        const notesData = await fetchNotes();
+        if (notesData.length > 0) {
+          setCurrentNote(notesData[0]);
+        }
+        setNotes(notesData);
+      } catch (error) {} // could add notifications here
     };
     loadNotes();
-  }, []);
+  }, [fetchNotes]);
 
   const addNote = async (note: Note) => {
-    const newNote = await createNote(note);
-    setNotes([...notes, newNote]);
-    setCurrentNote(newNote);
+    try {
+      const newNote = await createNote(note);
+      if (notes) setNotes([...notes, newNote]);
+      setCurrentNote(newNote);
+    } catch (error) {}
   };
 
   const updateNote = async (note: Note) => {
-    const updatedNote = await updateNoted(note);
-    setNotes(notes.map((n) => (n.id === note.id ? updatedNote : n)));
-    if (currentNote && updatedNote.id === currentNote.id) {
-      setCurrentNote(updatedNote);
-    }
+    try {
+      const updatedNote = await updateNoteA(note);
+      setNotes(notes.map((n) => (n.id === note.id ? updatedNote : n)));
+      if (currentNote && updatedNote.id === currentNote.id) {
+        setCurrentNote(updatedNote);
+      }
+    } catch (error) {}
   };
 
   const deleteNote = async (id: string) => {
-    await deleteNoted(id);
-    setNotes(notes.filter((n) => n.id !== id));
-    if (currentNote?.id === id) {
-      const index = notes.findIndex((n) => n.id === id);
-      if (index > 0) {
-        setCurrentNote(notes[index - 1]);
-      } else {
-        setCurrentNote(null);
+    try {
+      await deleteNoteA(id);
+      setNotes(notes.filter((n) => n.id !== id));
+
+      // update currentNote if deletedOne was the one displayed.
+      if (currentNote?.id === id) {
+        const index = notes.findIndex((n) => n.id === id);
+        if (index > 0) {
+          setCurrentNote(notes[index - 1]);
+        } else {
+          setCurrentNote(null);
+        }
       }
-    }
+    } catch (error) {}
   };
 
   return (

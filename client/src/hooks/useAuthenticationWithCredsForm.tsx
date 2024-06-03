@@ -21,9 +21,9 @@ const useAuthenticationWithCredsForm = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3001/authentication/signup",
-        values
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`,
+        values,
       );
       router.push("/");
     } catch (error) {

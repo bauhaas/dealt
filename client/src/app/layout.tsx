@@ -1,4 +1,4 @@
-import ClientLayout from "@/app/ClientLayout";
+import ClientLayout from "@/app/layouts/ClientLayout";
 import { TailwindSizeIndicator } from "@/lib/tailwindSizeIndicator";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";

@@ -1,10 +1,10 @@
 "use client";
 
-import { Sidebar } from "@/app/sidebar";
-import { NoteProvider } from "@/app/NoteContext";
-import Note from "@/app/note";
+import Sidebar from "@/app/components/Sidebar";
+import Note from "@/app/components/Note";
+import { NoteProvider } from "@/contexts/NoteContext";
 
-export default function Home() {
+const Home = () => {
   return (
     <NoteProvider>
       <div className="flex h-screen overflow-hidden">
@@ -15,4 +15,6 @@ export default function Home() {
       </div>
     </NoteProvider>
   );
-}
+};
+
+export default Home;

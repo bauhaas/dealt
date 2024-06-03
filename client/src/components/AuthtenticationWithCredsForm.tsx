@@ -33,12 +33,14 @@ export default function AuthenticationWithCredsForm({
   handleChange,
 }: AuthenticationWithCredsFormProps) {
   return (
-    <div className="flex flex-col gap-10 items-center bg-slate-600 h-screen w-full justify-center">
+    <div className="flex h-screen w-full flex-col items-center justify-center gap-10 bg-slate-600">
       <Image
         src="/images/Dealt_logo.png"
         alt="Dealt logo"
         width={300}
-        height={200}
+        height={300}
+        priority={true}
+        className="h-auto w-auto"
       />
       <Card className="w-full max-w-sm">
         <CardHeader>
@@ -72,7 +74,7 @@ export default function AuthenticationWithCredsForm({
             <Button type="submit" className="w-full">
               {buttonText}
             </Button>
-            <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400">
               {linkText}
               <Link className="underline" href={linkHref}>
                 {buttonText === "Signin" ? "Sign up" : "Sign in"}

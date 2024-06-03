@@ -1,10 +1,9 @@
-import { useNoteContext } from "@/app/NoteContext";
 import { useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
 import withAuth from "@/hoc/withAuth";
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
-import { NewNoteButton } from "@/components/NewNoteButton";
+import NewNoteButton from "@/components/NewNoteButton";
+import { Note } from "@/types/note";
+import { useNoteContext } from "@/contexts/NoteContext";
 
 const Note = () => {
   const { currentNote, updateNote } = useNoteContext();
@@ -44,7 +43,7 @@ const Note = () => {
             No notes yet
           </h2>
           <p className="text-gray-500 dark:text-gray-400">
-            Click the "New Note" button to create your first note.
+            Click the &quot;New Note&quot; button to create your first note.
           </p>
           <div className="w-fit">
             <NewNoteButton />

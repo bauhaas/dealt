@@ -1,9 +1,10 @@
-import { useNoteContext } from "@/app/NoteContext";
-import { Note } from "@/app/types/note";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
+import { useNoteContext } from "@/contexts/NoteContext";
 
-export const NewNoteButton = () => {
+const NewNoteButton = () => {
   const { addNote, notes } = useNoteContext();
 
   const handleOnClick = () => {
@@ -23,3 +24,5 @@ export const NewNoteButton = () => {
     </Button>
   );
 };
+
+export default NewNoteButton;

@@ -6,10 +6,12 @@ import { ReactNode } from "react";
 
 const queryClient = new QueryClient();
 
-export default function ClientLayout({ children }: { children: ReactNode }) {
+const ClientLayout = ({ children }: { children: ReactNode }) => {
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </SessionProvider>
   );
-}
+};
+
+export default ClientLayout;

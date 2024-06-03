@@ -13,19 +13,10 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: 'my-secret',
+      secret: 'your_secret_key', // TODO:use env variable
       resave: false,
       saveUninitialized: false,
-      cookie: { maxAge: 3600000 }, // 1 hour
-    }),
-  );
-
-  app.use(
-    session({
-      secret: 'your_secret_key', // Change this to a strong secret key
-      resave: false,
-      saveUninitialized: false,
-      cookie: { maxAge: 3600000 }, // 1 hour
+      cookie: { maxAge: 24 * 60 * 60 * 1000 },
     }),
   );
 
@@ -34,7 +25,6 @@ async function bootstrap() {
 
   setAPIDocumentation(app);
 
-  // app.setGlobalPrefix('api');
   await app.listen(3001);
 }
 

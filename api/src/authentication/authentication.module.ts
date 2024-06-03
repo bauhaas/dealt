@@ -13,9 +13,8 @@ import { SessionSerializer } from 'src/authentication/services/session.serialize
     UsersModule,
     PassportModule,
     JwtModule.register({
-      // secret: process.env.JWT_SECRET,
-      secret: 'secret',
-      signOptions: { expiresIn: '60m' },
+      secret: 'secret', //TODO: use env variable
+      signOptions: { expiresIn: '1d' },
     }),
   ],
   controllers: [AuthenticationController],
