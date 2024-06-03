@@ -22,7 +22,7 @@ const useAuthenticationWithCredsForm = () => {
     e.preventDefault();
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/authentication/signup`,
         values,
       );
       router.push("/");

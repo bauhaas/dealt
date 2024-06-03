@@ -23,6 +23,10 @@ I only did it for notes as it was the only domain having a "complete" CRUD imple
 
 ## How to get started
 
+Run `sh init.sh` at the root of the folder. Script will copy the `.env`files, install deps and run the docker-compose.
+
+If needed you can access the api & client container with `docker exec -it container_name sh`
+
 ## Notes
 
 Don't consider small size indicator is displayed on the bottomleft, becomes hidden when we are in prod. Used it as utils for dev. And my setup up run the app in dev mode.

@@ -23,9 +23,6 @@ COPY prisma/schema.prisma prisma/
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Remove existing node_modules and prisma client binaries
-RUN rm -rf node_modules/.prisma/client
-
 # Generate Prisma Client
 RUN npx prisma generate
 
